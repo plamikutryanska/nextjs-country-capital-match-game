@@ -2,11 +2,11 @@
 import {useState, useEffect} from 'react'
 import Link from 'next/link'
 import { isSelectionCorrect, removeData } from '../utils/countryCapitalUtils'
-import { mockData } from '../data/mockData'
 import styles from '../components/countryCapitalMatch.module.css'
 import _ from 'lodash'
 
-const CountryCapitalMatch = () => {
+const CountryCapitalMatch = ({responseData}) => {
+
   const [shuffledCountries, setShuffledCountries] = useState([])
   const [shuffledCapitals, setShuffledCapitals] = useState([])
 
@@ -20,8 +20,8 @@ const CountryCapitalMatch = () => {
 
 
   useEffect(() => {
-    setShuffledCountries(_.shuffle(mockData))
-    setShuffledCapitals(_.shuffle(mockData))
+    setShuffledCountries(_.shuffle(responseData))
+    setShuffledCapitals(_.shuffle(responseData))
   }, [])
 
   const calculteScore = (selectedCapital) => {
@@ -77,30 +77,30 @@ const ButtonComponent = ({data, onClick, pairIndex, objectKey, isDisabled}) => {
 const CountryCapitlLists = () => {
     return (
       <div style={{display: 'flex'}}>
-      <div className={styles.buttonContainer}>
-      {shuffledCountries.map((data) => {
-        return <ButtonComponent 
+        <div className={styles.buttonContainer}>
+        {shuffledCountries.map((data) => {
+          return <ButtonComponent 
+                    data={data}
+                    pairIndex={0}
+                    onClick={() => setSelectedPair([data])}
+                    objectKey={'name'}
+                    key={data.name}
+                    />
+        })}
+        </div>
+        <div className={styles.buttonContainer}>
+        {shuffledCapitals.map((data) => {
+          return <ButtonComponent 
                   data={data}
-                  pairIndex={0}
-                  onClick={() => setSelectedPair([data])}
-                  objectKey={'name'}
-                  key={data.name}
+                  pairIndex={1}
+                  onClick={() => {handleSelectedCapital(data), calculteScore(data)}}
+                  objectKey={'capital'}
+                  key={data.capital}
+                  isDisabled={buttonIsDisabled}
                   />
-      })}
+        })}
+        </div>
       </div>
-      <div className={styles.buttonContainer}>
-      {shuffledCapitals.map((data) => {
-        return <ButtonComponent 
-                data={data}
-                pairIndex={1}
-                onClick={() => {handleSelectedCapital(data), calculteScore(data)}}
-                objectKey={'capital'}
-                key={data.capital}
-                isDisabled={buttonIsDisabled}
-                />
-      })}
-      </div>
-    </div>
     )
 }
 
@@ -108,7 +108,7 @@ const CountryCapitlLists = () => {
   return (
     <div className={styles.container}>
       {
-        correctMatches.length !== mockData.length ? 
+        correctMatches.length !== responseData.length ? 
         <CountryCapitlLists/> : 
         <Link href={{pathname: '/results', query: {score: score}}} className={styles.link}>
           View Results
