@@ -65,7 +65,6 @@ const ButtonComponent = ({data, onClick, pairIndex, objectKey, isDisabled}) => {
   return (
     <button 
       onClick={onClick}
-      key={data[objectKey]}
       className={style}
       disabled={isDisabled}
     > 
